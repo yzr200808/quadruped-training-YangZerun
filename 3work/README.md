@@ -2,5 +2,6 @@
 控制器节点用C++完成，向仿真节点发出12个电机的5个mit参数，仿真节点向控制器节点返回12个电机的相关数据。
 还增加了一个xbox协议手柄节点，可通过手柄上AB两个键来完成机器狗动作的切换。
 并且编写了一个launch文件将上述三个节点可以一键启动
-运行时先在工作目录下source install/setup.bash
+运行时先在工作目录下colcon build --symlink-install
+再source install/setup.bash
 然后在终端输入ros2 launch mit_sim sim_with_controller.launch.py即可启动
