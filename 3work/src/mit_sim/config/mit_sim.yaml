@@ -1,0 +1,35 @@
+# MuJoCo 仿真控制节点参数
+# 数组下标顺序：0-2 FL hip/thigh/calf，3-5 FR，6-8 RR，9-11 RL
+mit_sim_node:
+  ros__parameters:
+    # MuJoCo 模型文件（meshdir 相对该文件所在目录解析）；
+    # 留空则回退为当前工作目录下的 black_description.xml
+    model_path: "/home/yzr/work/3work/black_description.xml"
+
+    # 初始关节角：趴下姿态（旧 pose_1），只作为初始状态存在，控制器不再有这样的目标姿态
+    initial_q: [0.0, 1.2, -2.5, 0.0, -1.2, 2.5, 0.0, -1.2, 2.5, 0.0, 1.2, -2.5]
+
+    # 是否在仿真内部叠加重力/科氏补偿力矩 qfrc_bias
+    # 注意：命令里 kp 全为 0 时（控制器的松弛模式）不会叠加，电机被放开
+    gravity_compensation: true
+
+    # 状态发布频率（与物理步长一起决定每几步发一次）
+    publish_rate: 500.0
+    # true = 按 500 Hz 实时推进；false = 尽快推进（离线仿真）
+    real_time: true
+    # 超过该时间没收到 /mit_cmd 就按零力矩运行
+    cmd_timeout: 0.2
+
+    # 是否打开 MuJoCo 可视化窗口；无图形环境下自动退化为无界面
+    viewer: true
+    # 可视化窗口按键原样转发给控制器（8=站姿，9=松弛）
+    keyboard_control: true
+
+    cmd_topic: "/mit_cmd"
+    state_topic: "/mit_state"
+    # 窗口按键转发话题，控制器订阅后决定发哪一组 MIT 参数
+    key_topic: "/key_input"
+
+    # QoS：必须与控制器保持一致的设置，默认为 best-effort
+    cmd_best_effort: true
+    state_best_effort: true

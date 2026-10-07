@@ -1,0 +1,39 @@
+# MIT 参数控制器节点参数
+# 数组下标顺序：0-2 FL hip/thigh/calf，3-5 FR，6-8 RR，9-11 RL
+# 默认值与 dog.py 保持一致
+mit_controller_node:
+  ros__parameters:
+    # 位置刚度（dog.py: kp）
+    kp: [80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 350.0, 350.0, 80.0, 350.0, 350.0]
+    # 速度阻尼（dog.py: kd）
+    kd: [3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0]
+
+    # 站姿目标（旧 pose_2）：按键 8 或 /target_pose=2 时插值到这里
+    # 前腿大腿给 ±0.3 rad 的前倾：大腿与地面夹角 76°->68°，小腿 38°->55°（后腿为 53°/58°），
+    # 前腿不再是近乎垂直的立柱，按 9 松弛时重力立刻在膝关节上产生力矩，趴平耗时 2.16 s -> 0.34 s
+    stand_pose: [0.0, 0.3, -0.85, 0.0, -0.3, 0.85, 0.0, -0.6, 1.1, 0.0, 0.6, -1.1]
+
+    # 松弛模式的阻尼（按键 9）：kp/q/dq/tau 全为 0，只留这个微小 kd
+    limp_kd: 0.01
+
+    # 姿态切换的插值时长（dog.py: T）
+    blend_time: 3.0
+    # 命令发布频率，与 MuJoCo 步长 0.002 s 对齐
+    publish_rate: 500.0
+    # 反馈超时时间，超时后输出放松命令
+    feedback_timeout: 0.1
+
+    cmd_topic: "/mit_cmd"
+    state_topic: "/mit_state"
+    # 窗口按键经仿真节点转发到这里：8=站姿，9=松弛
+    key_topic: "/key_input"
+
+    # 控制命令 QoS：true = best-effort（订阅端也要用 best-effort），
+    # 若下游节点只能用 reliable，改成 false
+    cmd_best_effort: true
+
+    # 状态反馈 QoS：仿真节点必须用同样的设置，默认 best-effort
+    state_best_effort: true
+
+    # 若仿真侧使用仿真时间，请改为 true
+    use_sim_time: false
