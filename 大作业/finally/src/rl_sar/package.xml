@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+  rl_sar 功能包清单（ROS2，package format 3）
+  作用：告诉 colcon / ros2 “这个包叫什么、用什么工具编、依赖谁、编出来是什么类型”
+
+  【1】基本信息（包名要和目录名、CMakeLists 里的 project() 一致）
+  【2】构建工具
+  【3】编译和运行都要的依赖
+  【4】只在运行时需要的依赖
+  【5】测试依赖
+  【6】构建类型声明
+  【7】不走 rosdep 的系统依赖说明
+-->
+<package format="3">
+
+  <!-- 【1】基本信息 -->
+  <name>rl_sar</name>
+  <version>3.0.0</version>
+  <description>强化学习策略部署框架：把 .pt 策略当成控制器节点跑起来（这里只保留仿真用的 rl_sim）</description>
+  <maintainer email="yzr@todo.todo">yzr</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- 【2】构建工具：ROS2 的 ament_cmake -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- 【3】编译和运行都要的依赖 —— 这里是包含各种库/消息包
+          rclcpp / geometry_msgs / sensor_msgs / std_msgs ：ROS2 基础通信与消息
+          std_srvs / rcl_interfaces                      ：rl_sim.hpp 里 include 的（ROS1 残留，留着不报错）
+          mit_interfaces                                 ：你自己写的 /mit_cmd、/mit_state -->
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>rcl_interfaces</depend>
+  <depend>mit_interfaces</depend>
+
+  <!-- 【4】只在运行时需要的依赖：launch 负责启动，joy 是手柄驱动 -->
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>joy</exec_depend>
+
+  <!-- 【5】测试依赖（这次用不到，保留不影响编译） -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <!-- 【6】声明本包用 ament_cmake 构建，colcon 靠这一行决定怎么编 -->
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+  <!-- 【7】以下依赖不写进 package.xml（它们不是 rosdep 里的包，由 CMakeLists 里的
+          find_package 直接找）：
+            yaml-cpp —— 读 policy/*.yaml（系统已装 libyaml-cpp-dev）
+            TBB      —— 线程安全队列（系统已装 libtbb-dev）
+            libtorch —— 神经网络推理，需要自己下载并设置 Torch_DIR 环境变量 -->
+</package>
